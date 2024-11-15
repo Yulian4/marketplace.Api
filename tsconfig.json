@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES6",                    // Genera código compatible con ECMAScript 6
+    "module": "commonjs",               // Usa módulos de tipo CommonJS (necesario para Node.js)
+    "strict": true,                     // Habilita todas las verificaciones estrictas de TypeScript
+    "esModuleInterop": true,            // Permite importar módulos CommonJS de manera más sencilla
+    "skipLibCheck": true,               // Omite la verificación de los tipos de las librerías
+    "forceConsistentCasingInFileNames": true, // Asegura que los nombres de archivos respeten mayúsculas y minúsculas
+    "outDir": "./dist",                 // Carpeta de salida para los archivos compilados
+    // "rootDir": "./src"                  // Carpeta donde están los archivos fuente en TypeScript
+  },
+  "include": [
+    "src/**/*.ts",                        // Incluye todos los archivos .ts en la carpeta src
+    // "src/types/express.d.ts"              // Incluye tu archivo de tipos que extiende la interfaz Request
+  ],
+  "files": [
+    "src/@types/express.d.ts"
+  ],
+  "exclude": ["node_modules"]              // Excluye la carpeta node_modules
+}
