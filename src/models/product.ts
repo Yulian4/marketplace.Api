@@ -1,8 +1,9 @@
 export interface Product {
+   id: string;
     name: string;
     description: string;
     price: number;
-    status: 'pending' | 'approved';
-    user: string; // Username del usuario que agregó el producto
+    status: 'Pendiente' | 'Aprobado';
+    user: string; 
   }
   

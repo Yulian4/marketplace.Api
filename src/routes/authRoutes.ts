@@ -1,6 +1,6 @@
 // src/routes/authRoutes.ts
 import { Router } from 'express';
-import { getCurrentUser, login, logout } from '../controllers/authController';
+import { getCurrentUser, registerUser, login, logout } from '../controllers/authController';
 import { authMiddleware } from '../middleware/authMiddleware';  // Importamos el middleware de autenticación
 
 const router = Router();
@@ -15,5 +15,6 @@ router.post('/logout', logout);
 router.get('/current-user', authMiddleware, getCurrentUser);
 
 
+router.post('/register', registerUser);
 
 export default router;
