@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { getUserProducts, addProduct, approveProduct, getAdminProducts } from '../controllers/productController';
+// import { getUserProducts, addProduct, approveProduct, getAdminProducts } from '../controllers/productController';
+import { getUserProducts, addProduct, approveProduct, getAdminProducts, rejectProduct, deleteProduct } from '../controllers/productController';
 import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
@@ -23,5 +24,16 @@ router.get('/admin-products', authMiddleware, (req, res, next) => {
   }
   next();
 }, getAdminProducts);
+
+// //rechazar producto
+router.put('/reject-product/:productId', authMiddleware, (req, res, next) => {
+  if (req.user?.role !== 'admin') {
+    return res.status(403).json({ message: 'Acción no permitida' });
+  }
+  next();
+}, rejectProduct);
+
+// Ruta para eliminar productos del usuario
+router.delete('/delete-product/:productId', authMiddleware, deleteProduct);
 
 export default router;

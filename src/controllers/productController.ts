@@ -62,3 +62,32 @@ export const approveProduct = (req: Request, res: Response): Response => {
     return res.status(404).json({ message: 'Producto no encontrado' });
   }
 };
+
+// rechazar un producto
+export const rejectProduct = (req: Request, res: Response): Response => {
+  const { productId } = req.params; // Obtiene el ID del producto de los parámetros de la ruta
+
+  const product = products.find(p => p.id === productId); 
+
+  if (product) {
+    product.status = 'Rechazado'; // Cambia el estado del producto a 'rechazado'
+    return res.status(200).json({ message: 'Producto Rechazado', product });
+  } else {
+    return res.status(404).json({ message: 'Producto no encontrado' });
+  }
+};
+
+// Eliminar una solicitud de producto
+export const deleteProduct = (req: Request, res: Response): Response => {
+  const { productId } = req.params;
+  const currentUser = req.user?.username;
+
+  const productIndex = products.findIndex(p => p.id === productId && p.user === currentUser);
+
+  if (productIndex === -1) {
+    return res.status(404).json({ message: 'Producto no encontrado o no tienes permiso para eliminarlo' });
+  }
+
+  products.splice(productIndex, 1); // Elimina el producto del array
+  return res.status(200).json({ message: 'Producto eliminado exitosamente' });
+};
