@@ -17,6 +17,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     }
     req.user = decoded as User;  // Aquí asignas el tipo `User` a `req.user`
 
+    req.body = {...req.body, user: req.user}
     next();  // Pasamos al siguiente middleware o controlador
   });
 };

@@ -6,5 +6,6 @@ export interface Product {
     // status: 'Pendiente' | 'Aprobado';
     status: 'Pendiente' | 'Aprobado' | 'Rechazado' ;
     user: string; 
+    image: string;
   }
   

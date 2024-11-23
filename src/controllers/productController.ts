@@ -2,11 +2,19 @@ import { Request, Response } from 'express';
 import { Product } from '../models/product';
 import { productosDB as products } from '../dataBase';
 import { v4 as uuidv4 } from 'uuid';
+import { appendFile, NoParamCallback } from 'fs';
 
 export const addProduct = (req: Request, res: Response): Response => {
-  const { name, description, price, user } = req.body;
 
-  if (!name || !description || !price || !user) {
+  const { name, description, price, user: { username } } = req.body;
+
+  const file = req.files?.file as {name:string, data: any};
+  console.log("res2", file?.name);
+
+  appendFile("E:/MarketplaceProject/marketplace/assets/images/products/"+ file?.name, file.data, ()=>{});
+  
+  // const user = req.user?.username;
+  if (!name || !description || !price || !username) {
     return res.status(400).json({ message: 'Todos los campos son requeridos' });
   }
 
@@ -15,8 +23,9 @@ export const addProduct = (req: Request, res: Response): Response => {
     name,
     description,
     price,
-    status: 'Pendiente',
-    user,
+    status: 'Pendiente',  
+    user: username,
+    image: file?.name
   };
   products.push(newProduct);
   return res.status(201).json({ message: 'Producto agregado exitosamente', product: newProduct });
@@ -63,7 +72,7 @@ export const approveProduct = (req: Request, res: Response): Response => {
   }
 };
 
-// rechazar un producto
+// Rechazar un producto
 export const rejectProduct = (req: Request, res: Response): Response => {
   const { productId } = req.params; // Obtiene el ID del producto de los parámetros de la ruta
 

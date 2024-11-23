@@ -3,9 +3,10 @@ import bodyParser from 'body-parser';
 import authRoutes from './routes/authRoutes';  // Asegúrate de que las rutas de auth estén importadas correctamente
 import cors from 'cors';
 import productRoutes from './routes/productRoutes'; 
-
+import fileUpload from 'express-fileupload';
 
 const app = express();
+app.use(fileUpload())
 
 app.use(cors({
     origin:"http://127.0.0.1:5500"
@@ -17,4 +18,5 @@ app.use(bodyParser.json());
 app.use('/auth', authRoutes);  // Todas las rutas de auth estarán bajo /auth
 
 app.use('/api/products', productRoutes);
+
 export default app;

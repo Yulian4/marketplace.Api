@@ -5,6 +5,7 @@ import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
 
+
 // Rutas protegidas con middleware de autenticación
 router.get('/user-products', authMiddleware, getUserProducts);  // Ver productos de usuario
 router.post('/add-product', authMiddleware, addProduct);  // Agregar producto
@@ -25,7 +26,7 @@ router.get('/admin-products', authMiddleware, (req, res, next) => {
   next();
 }, getAdminProducts);
 
-// //rechazar producto
+// Rechazar producto
 router.put('/reject-product/:productId', authMiddleware, (req, res, next) => {
   if (req.user?.role !== 'admin') {
     return res.status(403).json({ message: 'Acción no permitida' });

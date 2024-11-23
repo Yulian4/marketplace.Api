@@ -1,4 +1,3 @@
-// src/database/productos.ts
 import { Product } from "../models";
 
 export const productosDB: Product[] = [
@@ -8,7 +7,8 @@ export const productosDB: Product[] = [
     description: "Blanco",
     price: 2100,
     status: "Pendiente",
-    user: "yuliana"
+    user: "yuliana",
+    image: "Captura.png"
   },
   {
     id:"124",
@@ -16,7 +16,9 @@ export const productosDB: Product[] = [
     description: "Blanco",
     price: 2100,
     status: "Pendiente",
-    user: "yuliana"
+    user: "yuliana",
+    image: "Captura.png"
+
   },
   {
     id:"125",
@@ -24,6 +26,8 @@ export const productosDB: Product[] = [
     description: "Amarillo",
     price: 2100,
     status: "Aprobado",
-    user: "yuliana"
+    user: "yuliana",
+    image: "Captura.png"
+
   }
 ];
