@@ -4,8 +4,11 @@ import authRoutes from './routes/authRoutes';  // Asegúrate de que las rutas de
 import cors from 'cors';
 import productRoutes from './routes/productRoutes'; 
 import fileUpload from 'express-fileupload';
+import path from 'path';
 
 const app = express();
+app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
+
 app.use(fileUpload())
 
 app.use(cors({

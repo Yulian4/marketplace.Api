@@ -1,6 +1,6 @@
 import { Router } from 'express';
 // import { getUserProducts, addProduct, approveProduct, getAdminProducts } from '../controllers/productController';
-import { getUserProducts, addProduct, approveProduct, getAdminProducts, rejectProduct, deleteProduct } from '../controllers/productController';
+import { getUserProducts, addProduct, approveProduct, getAdminProducts, rejectProduct, deleteProduct,getApprovedProducts  } from '../controllers/productController';
 import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
@@ -25,6 +25,9 @@ router.get('/admin-products', authMiddleware, (req, res, next) => {
   }
   next();
 }, getAdminProducts);
+
+// Añadir la ruta para obtener productos aprobados
+router.get('/approved-products', getApprovedProducts);
 
 // Rechazar producto
 router.put('/reject-product/:productId', authMiddleware, (req, res, next) => {

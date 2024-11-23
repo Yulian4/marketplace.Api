@@ -100,3 +100,13 @@ export const deleteProduct = (req: Request, res: Response): Response => {
   products.splice(productIndex, 1); // Elimina el producto del array
   return res.status(200).json({ message: 'Producto eliminado exitosamente' });
 };
+// Agregar el controlador para obtener productos aprobados
+export const getApprovedProducts = (req: Request, res: Response): Response => {
+  const approvedProducts = products.filter(p => p.status === 'Aprobado'); // Filtra los productos aprobados
+
+  if (approvedProducts.length === 0) {
+    return res.status(404).json({ message: 'No hay productos aprobados' });
+  }
+
+  return res.status(200).json(approvedProducts);  // Devuelve los productos aprobados
+};
