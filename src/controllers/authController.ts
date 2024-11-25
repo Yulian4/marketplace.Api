@@ -6,7 +6,6 @@ import { User } from '../models/user';
 
 const SECRET_KEY = 'tu_clave_secreta';
 
-// Controlador para login
 export const login = (req: Request, res: Response): Response => {
   const { username, password } = req.body;
 
@@ -49,7 +48,6 @@ export const getCurrentUser = (req: Request, res: Response): Response => {
 export const registerUser = async (req: Request, res: Response): Promise<Response> => {
   const { username, password, documento } = req.body;
 
-  // Validación de campos
   if (!username || !password) {
     return res.status(400).json({ message: 'Todos los campos son requeridos' });
   }

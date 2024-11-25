@@ -3,7 +3,7 @@ export interface Product {
     name: string;
     description: string;
     price: number;
-    // status: 'Pendiente' | 'Aprobado';
+    // status: 'Pendiente' | 'Aprobado | 'Rechazo';
     status: 'Pendiente' | 'Aprobado' | 'Rechazado' ;
     user: string; 
     image: string;

@@ -1,4 +1,3 @@
-// src/dataBase.ts
 import { User } from "../models";
 import bcrypt from 'bcrypt';
 

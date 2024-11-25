@@ -48,7 +48,7 @@ export const getUserProducts = (req: Request, res: Response): Response => {
 
 // Agregar el controlador getAdminProducts aquí:
 export const getAdminProducts = (req: Request, res: Response): Response => {
-  const pendingProducts = products.filter(p => p.status === 'Pendiente');  // Filtra los productos pendientes
+  const pendingProducts = products.filter(p => p.status === 'Pendiente');  
 
   if (pendingProducts.length === 0) {
     return res.status(404).json({ message: 'No hay productos pendientes' });
@@ -74,7 +74,7 @@ export const approveProduct = (req: Request, res: Response): Response => {
 
 // Rechazar un producto
 export const rejectProduct = (req: Request, res: Response): Response => {
-  const { productId } = req.params; // Obtiene el ID del producto de los parámetros de la ruta
+  const { productId } = req.params; 
 
   const product = products.find(p => p.id === productId); 
 
@@ -102,7 +102,7 @@ export const deleteProduct = (req: Request, res: Response): Response => {
 };
 // Agregar el controlador para obtener productos aprobados
 export const getApprovedProducts = (req: Request, res: Response): Response => {
-  const approvedProducts = products.filter(p => p.status === 'Aprobado'); // Filtra los productos aprobados
+  const approvedProducts = products.filter(p => p.status === 'Aprobado'); 
 
   if (approvedProducts.length === 0) {
     return res.status(404).json({ message: 'No hay productos aprobados' });
