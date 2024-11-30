@@ -11,7 +11,7 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: process.env.DB_DIALECT as 'mysql',
-    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306,  // Usa el puerto 3306 por defecto si no se especifica
+    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3307,  // Usa el puerto 3307 por defecto si no se especifica
   }
 );
 
