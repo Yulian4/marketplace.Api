@@ -1,112 +1,139 @@
 import { Request, Response } from 'express';
 import { Product } from '../models/product';
-import { productosDB as products } from '../dataBase';
 import { v4 as uuidv4 } from 'uuid';
-import { appendFile, NoParamCallback } from 'fs';
+import upload from '../middleware/multerConfig';
 
-export const addProduct = (req: Request, res: Response): Response => {
+export const addProduct = async (req: Request, res: Response): Promise<Response> => {
+  const { name, description, price } = req.body;
+  const file = req.file;
+  const user = req.user?.username;
 
-  const { name, description, price, user: { username } } = req.body;
+  console.log('Archivo recibido:', file);
 
-  const file = req.files?.file as {name:string, data: any};
-  console.log("res2", file?.name);
-
-  appendFile("E:/MarketplaceProject/marketplace/assets/images/products/"+ file?.name, file.data, ()=>{});
-  
-  // const user = req.user?.username;
-  if (!name || !description || !price || !username) {
+  if (!name || !description || !price || !user) {
     return res.status(400).json({ message: 'Todos los campos son requeridos' });
   }
 
-  const newProduct: Product = {
-    id: uuidv4(),
-    name,
-    description,
-    price,
-    status: 'Pendiente',  
-    user: username,
-    image: file?.name
-  };
-  products.push(newProduct);
-  return res.status(201).json({ message: 'Producto agregado exitosamente', product: newProduct });
+  if (!file) {
+    return res.status(400).json({ message: 'El archivo de imagen es requerido' });
+  }
+
+  try {
+    const newProduct = await Product.create({
+      id: uuidv4(),
+      name,
+      description,
+      price,
+      status: 'Pendiente',
+      user,
+      image: file.filename 
+    });
+
+    return res.status(201).json({ message: 'Producto agregado exitosamente', product: newProduct });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(500).json({ message: 'Error al agregar producto', error: error.message });
+    } else {
+      return res.status(500).json({ message: 'Error desconocido al agregar producto' });
+    }
+  }
 };
 
-export const getUserProducts = (req: Request, res: Response): Response => {
-  const username = req.user?.username;  // Obtén el username del usuario autenticado
+
+
+
+
+
+
+
+export const getUserProducts = async (req: Request, res: Response): Promise<Response> => {
+  const username = req.user?.username;
   if (!username) {
     return res.status(400).json({ message: 'Usuario no autenticado' });
   }
 
-  const userProducts = products.filter(p => p.user === username);
-
-  if (userProducts.length === 0) {
-    return res.status(404).json({ message: `No se encontraron productos para el usuario: ${username}` });
+  try {
+    const userProducts = await Product.findAll({ where: { user: username } });
+    if (userProducts.length === 0) {
+      return res.status(404).json({ message: `No se encontraron productos para el usuario: ${username}` });
+    }
+    return res.status(200).json(userProducts);
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al obtener productos del usuario', error });
   }
-
-  return res.status(200).json(userProducts);
 };
 
-// Agregar el controlador getAdminProducts aquí:
-export const getAdminProducts = (req: Request, res: Response): Response => {
-  const pendingProducts = products.filter(p => p.status === 'Pendiente');  
-
-  if (pendingProducts.length === 0) {
-    return res.status(404).json({ message: 'No hay productos pendientes' });
+export const getAdminProducts = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const pendingProducts = await Product.findAll({ where: { status: 'Pendiente' } });
+    if (pendingProducts.length === 0) {
+      return res.status(404).json({ message: 'No hay productos pendientes' });
+    }
+    return res.status(200).json(pendingProducts);
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al obtener productos pendientes', error });
   }
-
-  return res.status(200).json(pendingProducts);  // Devuelve los productos pendientes
 };
 
-// Aprobar un producto por ID
-export const approveProduct = (req: Request, res: Response): Response => {
+export const approveProduct = async (req: Request, res: Response): Promise<Response> => {
   const { productId } = req.params;
 
-  // Busca el producto por ID, no por nombre
-  const product = products.find(p => p.id === productId);
-
-  if (product) {
-    product.status = 'Aprobado';
-    return res.status(200).json({ message: 'Producto aprobado', product });
-  } else {
-    return res.status(404).json({ message: 'Producto no encontrado' });
+  try {
+    const product = await Product.findByPk(productId);
+    if (product) {
+      product.status = 'Aprobado';
+      await product.save();
+      return res.status(200).json({ message: 'Producto aprobado', product });
+    } else {
+      return res.status(404).json({ message: 'Producto no encontrado' });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al aprobar producto', error });
   }
 };
 
-// Rechazar un producto
-export const rejectProduct = (req: Request, res: Response): Response => {
-  const { productId } = req.params; 
+export const rejectProduct = async (req: Request, res: Response): Promise<Response> => {
+  const { productId } = req.params;
 
-  const product = products.find(p => p.id === productId); 
-
-  if (product) {
-    product.status = 'Rechazado'; // Cambia el estado del producto a 'rechazado'
-    return res.status(200).json({ message: 'Producto Rechazado', product });
-  } else {
-    return res.status(404).json({ message: 'Producto no encontrado' });
+  try {
+    const product = await Product.findByPk(productId);
+    if (product) {
+      product.status = 'Rechazado';
+      await product.save();
+      return res.status(200).json({ message: 'Producto rechazado', product });
+    } else {
+      return res.status(404).json({ message: 'Producto no encontrado' });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al rechazar producto', error });
   }
 };
 
-// Eliminar una solicitud de producto
-export const deleteProduct = (req: Request, res: Response): Response => {
+export const deleteProduct = async (req: Request, res: Response): Promise<Response> => {
   const { productId } = req.params;
   const currentUser = req.user?.username;
 
-  const productIndex = products.findIndex(p => p.id === productId && p.user === currentUser);
+  try {
+    const product = await Product.findOne({ where: { id: productId, user: currentUser } });
+    if (!product) {
+      return res.status(404).json({ message: 'Producto no encontrado o no tienes permiso para eliminarlo' });
+    }
 
-  if (productIndex === -1) {
-    return res.status(404).json({ message: 'Producto no encontrado o no tienes permiso para eliminarlo' });
+    await product.destroy();
+    return res.status(200).json({ message: 'Producto eliminado exitosamente' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al eliminar producto', error });
   }
-
-  products.splice(productIndex, 1); // Elimina el producto del array
-  return res.status(200).json({ message: 'Producto eliminado exitosamente' });
 };
-// Agregar el controlador para obtener productos aprobados
-export const getApprovedProducts = (req: Request, res: Response): Response => {
-  const approvedProducts = products.filter(p => p.status === 'Aprobado'); 
 
-  if (approvedProducts.length === 0) {
-    return res.status(404).json({ message: 'No hay productos aprobados' });
+export const getApprovedProducts = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const approvedProducts = await Product.findAll({ where: { status: 'Aprobado' } });
+    if (approvedProducts.length === 0) {
+      return res.status(404).json({ message: 'No hay productos aprobados' });
+    }
+    return res.status(200).json(approvedProducts);
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al obtener productos aprobados', error });
   }
-
-  return res.status(200).json(approvedProducts);  // Devuelve los productos aprobados
 };

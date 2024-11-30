@@ -1,23 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/user';
 
-const SECRET_KEY = 'tu_clave_secreta'; 
+// Usa una clave secreta más segura y guárdala en una variable de entorno
+const SECRET_KEY = process.env.SECRET_KEY || 'clave_secreta_por_defecto';
 
+// Middleware de autenticación
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers['authorization']?.split(' ')[1];  
+  const token = req.headers['authorization']?.split(' ')[1];
+
   if (!token) {
-    return res.status(401).json({ message: 'Falta el Token' });
+    return res.status(403).json({ message: 'Token requerido' });
   }
 
-  // Verificamos el token
-  jwt.verify(token, SECRET_KEY, (err: any, decoded: any) => {
+  jwt.verify(token, SECRET_KEY, (err, decoded) => {
     if (err) {
-      return res.status(403).json({ message: 'Token Invalido' });
+      console.error('Error al verificar el token:', err); 
+      return res.status(401).json({ message: 'Token inválido' });
     }
-    req.user = decoded as User;  // Aquí asignas el tipo `User` a `req.user`
 
-    req.body = {...req.body, user: req.user}
-    next();  // Pasamos al siguiente middleware o controlador
+    // Asegurarse de que 'decoded' es del tipo esperado
+    req.user = decoded as { username: string; role: 'user' | 'admin' };
+    next();
   });
 };
