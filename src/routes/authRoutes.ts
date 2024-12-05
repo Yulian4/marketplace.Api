@@ -1,19 +1,21 @@
 import { Router } from 'express';
-import { getCurrentUser, registerUser, login, logout } from '../controllers/authController';
-import { authMiddleware } from '../middleware/authMiddleware';  
+import { getCurrentUser, registerUser, login, logout, resetPassword, Question, validateAnswer } from '../controllers/authController';
+import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
 
-// Ruta para el login (sin middleware, acceso público)
 router.post('/login', login);
 
-// Ruta para el logout (sin middleware, acceso público)
 router.post('/logout', logout);
 
-// Ruta para obtener el usuario actual (con middleware, solo accesible para usuarios autenticados)
 router.get('/current-user', authMiddleware, getCurrentUser);
 
-
 router.post('/register', registerUser);
+
+router.post('/reset-password', resetPassword);
+
+router.post('/consult', Question);
+
+router.post('/validate-answer', validateAnswer);
 
 export default router;
